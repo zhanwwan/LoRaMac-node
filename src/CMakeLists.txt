@@ -24,7 +24,7 @@ cmake_minimum_required(VERSION 3.6)
 
 # Allow switching of target platform
 set(BOARD_LIST LoRaMote MoteII NAMote72 SensorNode SK-iM880A NucleoL073 NucleoL152 SAML21)
-set(BOARD LoRaMote CACHE STRING "Default target platform is LoRaMote")
+set(BOARD SensorNode CACHE STRING "Default target platform is LoRaMote")
 set_property(CACHE BOARD PROPERTY STRINGS ${BOARD_LIST})
 
 # Allow switching of MBED shields
@@ -38,10 +38,10 @@ set(APPLICATION LoRaMac CACHE STRING "Default Application is LoRaMac")
 set_property(CACHE APPLICATION PROPERTY STRINGS ${APPLICATION_LIST})
 
 # Switch for USB-Uart support, enable it for some Applications who needs it.
-option(USE_USB_CDC "Use USB-Uart" OFF)
+option(USE_USB_CDC "Use USB-Uart" ON)
 
 # Switch for bootloader support.
-option(USE_BOOTLOADER "Use Bootloader" OFF)
+option(USE_BOOTLOADER "Use Bootloader" ON)
 
 # Switch for debugger support.
 option(USE_DEBUGGER "Use Debugger" ON)
