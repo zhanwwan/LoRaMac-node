@@ -33,9 +33,9 @@
 
 #ifndef ACTIVE_REGION
 
-#warning "No active region defined, LORAMAC_REGION_CN470 will be used as default."
+#warning "No active region defined, LORAMAC_REGION_EU868 will be used as default."
 
-#define ACTIVE_REGION LORAMAC_REGION_CN470
+#define ACTIVE_REGION LORAMAC_REGION_EU868
 
 #endif
 
@@ -76,7 +76,7 @@
  *
  * \remark Please note that ETSI mandates duty cycled transmissions. Use only for test purposes
  */
-#define LORAWAN_DUTYCYCLE_ON                        true
+#define LORAWAN_DUTYCYCLE_ON                        false
 
 #endif
 
