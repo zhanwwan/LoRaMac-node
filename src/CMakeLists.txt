@@ -38,7 +38,7 @@ set(APPLICATION LoRaMac CACHE STRING "Default Application is LoRaMac")
 set_property(CACHE APPLICATION PROPERTY STRINGS ${APPLICATION_LIST})
 
 # Switch for USB-Uart support, enable it for some Applications who needs it.
-option(USE_USB_CDC "Use USB-Uart" ON)
+option(USE_USB_CDC "Use USB-Uart" OFF)
 
 # Switch for bootloader support.
 option(USE_BOOTLOADER "Use Bootloader" ON)

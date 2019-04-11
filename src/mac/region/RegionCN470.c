@@ -32,6 +32,7 @@
 
 #include "RegionCommon.h"
 #include "RegionCN470.h"
+//#include "rtc-board.h"
 
 // Definitions
 #define CHANNELS_MASK_SIZE              6
@@ -290,18 +291,18 @@ void RegionCN470InitDefaults( InitType_t type )
             // 125 kHz channels
             for( uint8_t i = 0; i < CN470_MAX_NB_CHANNELS; i++ )
             {
-                Channels[i].Frequency = 486100000 + i * 200000;
+                Channels[i].Frequency = 470300000 + i * 200000;
                 Channels[i].DrRange.Value = ( DR_5 << 4 ) | DR_0;
                 Channels[i].Band = 0;
             }
 
             // Initialize the channels default mask
-            ChannelsDefaultMask[0] = 0xFFFF;
-            ChannelsDefaultMask[1] = 0xFFFF;
-            ChannelsDefaultMask[2] = 0xFFFF;
-            ChannelsDefaultMask[3] = 0xFFFF;
-            ChannelsDefaultMask[4] = 0xFFFF;
-            ChannelsDefaultMask[5] = 0xFFFF;
+            ChannelsDefaultMask[0] = 0x0000;
+            ChannelsDefaultMask[1] = 0x0000;
+            ChannelsDefaultMask[2] = 0x0000;
+            ChannelsDefaultMask[3] = 0x0000;
+            ChannelsDefaultMask[4] = 0x0000;
+            ChannelsDefaultMask[5] = 0x00FF;
 
             // Update the channels mask
             RegionCommonChanMaskCopy( ChannelsMask, ChannelsDefaultMask, 6 );
@@ -480,6 +481,7 @@ bool RegionCN470RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
 
     Radio.SetChannel( frequency );
 
+    //e_printf("%ld - Rx1 Freq=%d, BW=%d, DR=%d, symb=%d\n", RtcGetTimerValue(),frequency,rxConfig->Bandwidth,phyDr,rxConfig->WindowTimeout);
     // Radio configuration
     Radio.SetRxConfig( MODEM_LORA, rxConfig->Bandwidth, phyDr, 1, 0, 8, rxConfig->WindowTimeout, false, 0, false, 0, 0, true, rxConfig->RxContinuous );
 

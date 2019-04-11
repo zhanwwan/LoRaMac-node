@@ -42,6 +42,7 @@
 #include "uart-usb-board.h"
 #endif
 #include "board.h"
+//#include <stdarg.h>
 
 /*!
  * Unique Devices IDs register set ( STM32L1xxx )
@@ -549,5 +550,23 @@ void assert_failed( uint8_t* file, uint32_t line )
     while( 1 )
     {
     }
+}
+#endif
+
+#if 0 // for debug
+#define MAX_MSG_LEN 127
+
+static char ll_msg_buf_[MAX_MSG_LEN];
+
+void e_printf(const char *format, ...)
+{
+    va_list args;
+    size_t len;
+
+    /* Format the string */
+    va_start(args, format);
+    len = vsnprintf(ll_msg_buf_, MAX_MSG_LEN, &format[0], args);
+    va_end(args);
+    UartPutBuffer(&UartUsb, (uint8_t *)&ll_msg_buf_, len);
 }
 #endif

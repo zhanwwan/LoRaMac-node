@@ -33,16 +33,16 @@
 
 #ifndef ACTIVE_REGION
 
-#warning "No active region defined, LORAMAC_REGION_EU868 will be used as default."
+#warning "No active region defined, LORAMAC_REGION_CN470 will be used as default."
 
-#define ACTIVE_REGION LORAMAC_REGION_EU868
+#define ACTIVE_REGION LORAMAC_REGION_CN470
 
 #endif
 
 /*!
  * Defines the application data transmission duty cycle. 5s, value in [ms].
  */
-#define APP_TX_DUTYCYCLE                            5000
+#define APP_TX_DUTYCYCLE                            10000
 
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,

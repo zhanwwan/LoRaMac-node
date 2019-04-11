@@ -32,6 +32,8 @@
 #include "LoRaMac.h"
 #include "LoRaMacCrypto.h"
 #include "LoRaMacTest.h"
+//#include "rtc-board.h"
+//#include <stdio.h>
 
 /*!
  * Maximum PHY layer payload size
@@ -665,6 +667,8 @@ static void OnRadioTxDone( void )
     // Setup timers
     if( IsRxWindowsEnabled == true )
     {
+        //e_printf("%ld - TxDone Cnt: %ld, RxWin1Delay=%ld\n", RtcGetTimerValue(),UpLinkCounter,RxWindow1Delay);
+
         TimerSetValue( &RxWindowTimer1, RxWindow1Delay );
         TimerStart( &RxWindowTimer1 );
         if( LoRaMacDeviceClass != CLASS_C )
@@ -751,6 +755,23 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
     uint8_t frameLen = 0;
     uint32_t mic = 0;
     uint32_t micRx = 0;
+#if 0
+    e_printf("RxDone ==> size=%d, rssi=%d, snr=%d\r\n ", size, rssi, snr);
+    char hex_str[3]={0};
+    e_printf("size:%d\r\n",size);
+    if(size){
+       e_printf("payload:");
+       for (int i = 5; i < size; i++) {
+            sprintf(hex_str, "%x", payload[i]);
+            if(i == 5){e_printf("Fctrl=%s\r\n", hex_str);sprintf(hex_str, "%x", payload[0]);e_printf("MHDR=%s\r\n", hex_str);}
+            else if((i==6)||(i==7))e_printf("%s", hex_str);
+            else e_printf("%s", hex_str);
+            if(i==7)e_printf("\r\n");
+        }
+       e_printf("\r\n");
+    }
+    e_printf("\r\n");
+#endif
 
     uint16_t sequenceCounter = 0;
     uint16_t sequenceCounterPrev = 0;
@@ -783,7 +804,7 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
     TimerStop( &RxWindowTimer2 );
 
     macHdr.Value = payload[pktHeaderLen++];
-
+    //e_printf("RxDone MType=%d\n", macHdr.Bits.MType);
     switch( macHdr.Bits.MType )
     {
         case FRAME_TYPE_JOIN_ACCEPT:
@@ -916,6 +937,7 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
 
                 sequenceCounterPrev = ( uint16_t )downLinkCounter;
                 sequenceCounterDiff = ( sequenceCounter - sequenceCounterPrev );
+	              //e_printf("sequenceCounterDiff = %d,downLinkCounter=%d\r\n",sequenceCounterDiff,downLinkCounter);
 
                 if( sequenceCounterDiff < ( 1 << 15 ) )
                 {
@@ -1208,6 +1230,8 @@ static void OnRadioRxTimeout( void )
 
     if( RxSlot == RX_SLOT_WIN_1 )
     {
+        //e_printf("%ld - LoRaMac Rx1Timeout\n",RtcGetTimerValue());
+
         if( NodeAckRequested == true )
         {
             McpsConfirm.Status = LORAMAC_EVENT_INFO_STATUS_RX1_TIMEOUT;
@@ -1473,6 +1497,7 @@ static void OnRxWindow1TimerEvent( void )
 
     RegionRxConfig( LoRaMacRegion, &RxWindow1Config, ( int8_t* )&McpsIndication.RxDatarate );
     RxWindowSetup( RxWindow1Config.RxContinuous, LoRaMacParams.MaxRxWindow );
+    //e_printf("%ld - Rx1Evt: Chan=%d, Dr_tb[%d],MaxRx=%d\n", RtcGetTimerValue(),RxWindow1Config.Channel, RxWindow1Config.Datarate,LoRaMacParams.MaxRxWindow);
 }
 
 static void OnRxWindow2TimerEvent( void )
@@ -1499,6 +1524,7 @@ static void OnRxWindow2TimerEvent( void )
     {
         RxWindowSetup( RxWindow2Config.RxContinuous, LoRaMacParams.MaxRxWindow );
         RxSlot = RX_SLOT_WIN_2;
+        //e_printf("%ld - Rx2_Freq=%d, Dr_tb[%d] \r\n",RtcGetTimerValue(), RxWindow2Config.Frequency, RxWindow2Config.Datarate);
     }
 }
 
@@ -1776,6 +1802,7 @@ static void ProcessMacCommands( uint8_t *payload, uint8_t macIndex, uint8_t comm
     while( macIndex < commandsSize )
     {
         // Decode Frame MAC commands
+        //e_printf("Mac=%d\r\n", payload[macIndex]);
         switch( payload[macIndex++] )
         {
             case SRV_MAC_LINK_CHECK_ANS:
@@ -2057,6 +2084,9 @@ static LoRaMacStatus_t ScheduleTx( bool allowDelayedTx )
         RxWindow2Delay = LoRaMacParams.ReceiveDelay2 + RxWindow2Config.WindowOffset;
     }
 
+	  //e_printf("Cal Rx1Delay=%d, TxChannel=%d, dutyCycleTimeOff=%d, ",RxWindow1Delay,Channel,dutyCycleTimeOff);
+	  //e_printf("Datarate=%d\n",LoRaMacParams.ChannelsDatarate);
+    //e_printf("\n%ld - Tx on Ch%d\n",RtcGetTimerValue(),Channel);
     // Try to send now
     return SendFrameOnChannel( Channel );
 }

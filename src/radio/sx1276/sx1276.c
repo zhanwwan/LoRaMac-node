@@ -33,6 +33,7 @@
 #include "delay.h"
 #include "sx1276.h"
 #include "sx1276-board.h"
+//#include "rtc-board.h"
 
 /*
  * Local types definition
@@ -1018,6 +1019,7 @@ void SX1276SetRx( uint32_t timeout )
     SX1276.Settings.State = RF_RX_RUNNING;
     if( timeout != 0 )
     {
+        //e_printf("%ld - SX1276SetRx(): RxTimer value=%d\n",RtcGetTimerValue(),timeout);
         TimerSetValue( &RxTimeoutTimer, timeout );
         TimerStart( &RxTimeoutTimer );
     }
@@ -1352,6 +1354,7 @@ uint32_t SX1276GetWakeupTime( void )
 
 void SX1276OnTimeoutIrq( void )
 {
+    //e_printf("%ld - SX1276TimeoutIrq: state=%d, mod=%d\n",RtcGetTimerValue(),SX1276.Settings.State,SX1276.Settings.Modem);
     switch( SX1276.Settings.State )
     {
     case RF_RX_RUNNING:
@@ -1429,6 +1432,7 @@ void SX1276OnDio0Irq( void )
 {
     volatile uint8_t irqFlags = 0;
 
+    //e_printf("%ld - DIO0: state=%d, mode=%d\n",RtcGetTimerValue(),SX1276.Settings.State,SX1276.Settings.Modem);
     switch( SX1276.Settings.State )
     {
         case RF_RX_RUNNING:
@@ -1628,6 +1632,7 @@ void SX1276OnDio0Irq( void )
 
 void SX1276OnDio1Irq( void )
 {
+    //e_printf("%ld - DIO1: state=%d,mod=%d\n",RtcGetTimerValue(),SX1276.Settings.State,SX1276.Settings.Modem);
     switch( SX1276.Settings.State )
     {
         case RF_RX_RUNNING:
